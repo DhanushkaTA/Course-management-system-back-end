@@ -13,5 +13,6 @@ export const {
     EMAIL_PASS,
     EMAIL_SERVICE,
     EMAIL_PORT,
-    EMAIL_HOST
+    EMAIL_HOST,
+    OPENAI_API_KEY
 } = process.env;

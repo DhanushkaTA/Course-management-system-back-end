@@ -13,6 +13,8 @@ import * as GlobalErrorHandler from './exception/ExceptionHandler'
 import AuthRoute from "./route/AuthRoute";
 import UserRoute from "./route/UserRoute";
 import CourseRoute from "./route/CourseRoute";
+import ChatRoute from "./route/ChatRoute";
+import EnrollRoute from "./route/EnrollRoute";
 
 let app = express();
 
@@ -44,7 +46,8 @@ mongoose.connect(MONGO_URL as string).then( r => {
 app.use('/api/v1/auth', AuthRoute)
 app.use('/api/v1/users', UserRoute)
 app.use('/api/v1/course', CourseRoute)
-app.use('/api/v1/enroll', CourseRoute)
+app.use('/api/v1/enroll', EnrollRoute)
+app.use('/api/v1/chat', ChatRoute)
 
 app.get('/test', (req, res) => {
     res.send('Test route working');
