@@ -24,7 +24,7 @@ export const createCourse = async (
         const newCourse = new courseModel({
             title: title,
             description: description,
-            instructor: req.tokenData.user._id,
+            instructor: req.tokenData.user.id,
             content: content,
         });
 
@@ -63,7 +63,7 @@ export const updateCourse = async (
         // Find course and verify ownership
         const course = await courseModel.findOne({
             _id: courseId,
-            instructor: req.tokenData.user._id
+            instructor: req.tokenData.user.id
         });
 
         if (!course) {
@@ -100,7 +100,7 @@ export const deleteCourse = async (
 ) => {
     try {
         const { courseId } = req.params;
-        const instructorId = req.tokenData.user._id;
+        const instructorId = req.tokenData.user.id;
 
         const course = await courseModel.findOne({
             _id: courseId,
@@ -135,13 +135,39 @@ export const getAllCourses = async (
     next: express.NextFunction
 ) => {
     try {
-        // get course details with instructor details and sort to newest first
+        // get course details with instructor details and sort to the newest first
         const courses = await courseModel
             .find(undefined, undefined, undefined)
             .populate("instructor", "fullName email")
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 }).lean();
 
-        return res.status(200).send(
+        res.status(200).send(
+            new CustomResponse(
+                StatusCodes.COURSE_LIST_FETCHED,
+                "Course list fetched successfully",
+                courses
+            )
+        );
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getCoursesByInstructorId = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+) => {
+    try {
+        // const { instructorId } = req.params;
+        const instructorId = req.tokenData.user.id;
+
+
+        const courses = await courseModel
+            .find({ instructor: instructorId })
+            .sort({ createdAt: -1 }).lean();
+
+        res.status(200).send(
             new CustomResponse(
                 StatusCodes.COURSE_LIST_FETCHED,
                 "Course list fetched successfully",
